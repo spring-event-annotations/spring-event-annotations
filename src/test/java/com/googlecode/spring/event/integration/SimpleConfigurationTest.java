@@ -14,7 +14,7 @@ import com.googlecode.spring.event.annotation.ObservesAnotationBeanPostProcessor
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/simple-context.xml")
-@Ignore
+//@Ignore
 public class SimpleConfigurationTest {
 	
 	@Autowired
