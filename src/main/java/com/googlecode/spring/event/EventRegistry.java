@@ -1,16 +1,13 @@
 package com.googlecode.spring.event;
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.*;
 
-import org.springframework.util.Assert;
-
+import org.springframework.util.*;
 
 public class EventRegistry implements Event {
-
+	
 	private List<EventListener> registeredEvents = new ArrayList<EventListener>();
 	private Executor executor;
 	
@@ -23,6 +20,9 @@ public class EventRegistry implements Event {
 	}
 	
 	public void registerEvent(Object bean, Method method, Class<?> parameterType) {
+		Assert.notNull(bean, "Cannot register event: Bean reference cannot be null");
+		Assert.notNull(method, "Cannot register event: Method reference cannot be null");
+		Assert.notNull(parameterType, "Cannot register event: Paremeter type cannot be null");
 		registeredEvents.add(new EventListener(bean, method, parameterType));
 	}
 	
@@ -41,13 +41,13 @@ public class EventRegistry implements Event {
 	}
 	
 	private static class EventListener implements Event {
-		private final WeakReference<Object> beanWeakRef;
-		private final WeakReference<Method> methodWeakRef;
 		private final Class<?> parameterType;
+		private final Method method;
+		private final Object bean;
 
 		private EventListener(Object bean, Method method, Class<?> parameterType) {
-			this.beanWeakRef = new WeakReference<Object>(bean);
-			this.methodWeakRef = new WeakReference<Method>(method);
+			this.bean = bean;
+			this.method = method;
 			this.parameterType = parameterType;
 		}
 
@@ -56,8 +56,6 @@ public class EventRegistry implements Event {
 		}
 
 		public void fire(Object event) {
-			Object bean = beanWeakRef.get();
-			Method method = methodWeakRef.get();
 			try {
 				method.invoke(bean, event);
 			} catch (Throwable e) {
