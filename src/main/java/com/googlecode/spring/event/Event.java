@@ -1,5 +1,5 @@
 package com.googlecode.spring.event;
 
-public interface Event {
-	public void fire(Object event);
+public interface Event<T> {
+	public void fire(T event);
 }

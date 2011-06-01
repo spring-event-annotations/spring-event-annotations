@@ -6,6 +6,7 @@ import java.util.concurrent.*;
 
 import org.springframework.util.*;
 
+@SuppressWarnings("rawtypes")
 public class EventRegistry implements Event {
 	
 	private List<EventListener> registeredEvents = new ArrayList<EventListener>();
@@ -40,7 +41,7 @@ public class EventRegistry implements Event {
 		}
 	}
 	
-	private static class EventListener implements Event {
+	private class EventListener implements Event {
 		private final Class<?> parameterType;
 		private final Method method;
 		private final Object bean;

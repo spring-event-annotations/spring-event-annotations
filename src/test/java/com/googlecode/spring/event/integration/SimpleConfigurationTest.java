@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.googlecode.spring.event.EventRegistry;
+import com.googlecode.spring.event.*;
 import com.googlecode.spring.event.annotation.ObservesAnotationBeanPostProcessor;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,11 +23,13 @@ public class SimpleConfigurationTest {
 	@Test
 	public void testBasicConfiguration() throws InterruptedException {
 		Assert.assertNotNull(context.getBean(ObservesAnotationBeanPostProcessor.class));
-		EventRegistry event = context.getBean(EventRegistry.class);
-		Assert.assertNotNull(event);
-		Assert.assertTrue(event instanceof EventRegistry);
+		Event<String> event1 = context.getBean(EventRegistry.class);
+		Event<Bean> event2 = context.getBean(EventRegistry.class);
 		
-		event.fire("string");
-		event.fire(new Bean());
+		Assert.assertNotNull(event1);
+		Assert.assertTrue(event2 instanceof EventRegistry);
+		
+		event1.fire("string");
+		event2.fire(new Bean());
 	}
 }
