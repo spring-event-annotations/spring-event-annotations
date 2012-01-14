@@ -10,15 +10,15 @@ import org.junit.rules.Verifier;
 import org.mockito.Mockito;
 import org.springframework.core.task.SyncTaskExecutor;
 
+import com.googlecode.spring.event.EventHandledCallback;
 import com.googlecode.spring.event.EventRegistry;
-
 
 @SuppressWarnings("unused")
 public class ObservesAnotationBeanPostProcessorTest {
 	
 	private ObservesAnotationBeanPostProcessor proc;
 	private EventRegistry eventRegistry;
-	private ExecutorDelegate verifier = mock(ExecutorDelegate.class);
+	private EventHandledCallback verifier = mock(EventHandledCallback.class);
 
 	@Before
 	public void before() {
@@ -57,15 +57,16 @@ public class ObservesAnotationBeanPostProcessorTest {
 
 	@Test
 	public void postProcessAfterInitialization_1AnnotatedMethodParameter_EventsExecuted() {
-		proc.postProcessAfterInitialization(new BeanA(verifier), "bean");
+		proc.postProcessAfterInitialization(new StringListener1(verifier), "bean");
 		eventRegistry.fire("event");
-		verify(verifier, times(1)).execute();
+		verify(verifier).eventHandled("observeString1");
 	}
 	
 	@Test
 	public void postProcessAfterInitialization_2Methods_EventsExecuted() {
-		proc.postProcessAfterInitialization(new BeanB(verifier), "bean");
+		proc.postProcessAfterInitialization(new StringListener2(verifier), "bean");
 		eventRegistry.fire("event");
-		verify(verifier, times(2)).execute();
+		verify(verifier).eventHandled("observeString1");
+		verify(verifier).eventHandled("observeString2");
 	}
 }

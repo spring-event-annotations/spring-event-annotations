@@ -1,15 +1,18 @@
 package com.googlecode.spring.event;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
 
-import org.springframework.util.*;
+import org.springframework.util.Assert;
 
 @SuppressWarnings("rawtypes")
 public class EventRegistry implements Event {
 	
-	private List<EventListener> registeredEvents = new ArrayList<EventListener>();
+	private List<DefaultEvent> notQualifiedEvents = new ArrayList<DefaultEvent>();
+	private List<QualifiedEvent> qualifiedEvents = new ArrayList<QualifiedEvent>();
 	private Executor executor;
 	
 	public EventRegistry() {
@@ -20,33 +23,50 @@ public class EventRegistry implements Event {
 		this.executor = executor;
 	}
 	
-	public void registerEvent(Object bean, Method method, Class<?> parameterType) {
-		Assert.notNull(bean, "Cannot register event: Bean reference cannot be null");
+	public void registerEvent(Object bean, Method method, Class<?> parameterType, Annotation qualifier) {
+		Assert.notNull(bean, "Cannot register event: Item reference cannot be null");
 		Assert.notNull(method, "Cannot register event: Method reference cannot be null");
 		Assert.notNull(parameterType, "Cannot register event: Paremeter type cannot be null");
-		registeredEvents.add(new EventListener(bean, method, parameterType));
-	}
-	
-	public void fire(final Object event) {
-		Assert.state(executor != null, "Could not fire event: Executor not specified");
-		for (final EventListener listener : registeredEvents) {
-			if(!listener.isSupported(event.getClass())) {
-				continue;
-			}
-			executor.execute(new Runnable() {
-				public void run() {
-					listener.fire(event);
-				}
-			});
+		
+		if(qualifier == null) {
+			notQualifiedEvents.add(new DefaultEvent(bean, method, parameterType));
+		} else {
+			qualifiedEvents.add(new QualifiedEvent(bean, method, parameterType, qualifier));
 		}
 	}
 	
-	private class EventListener implements Event {
-		private final Class<?> parameterType;
+	public void fire(final Object event) {
+		for (final DefaultEvent e : notQualifiedEvents) {
+			if(!e.isSupported(event.getClass())) {
+				continue;
+			}
+			execute(event, e);
+		}
+	}
+
+	void fire(final Object event, final Annotation qualifier) {
+		for (final QualifiedEvent e : qualifiedEvents) {
+			if(!e.isSupported(event.getClass(), qualifier)) {
+				continue;
+			}
+			execute(event, e);
+		}
+	}
+	
+	private void execute(final Object event, final DefaultEvent listener) {
+		executor.execute(new Runnable() {
+			public void run() {
+				listener.doFire(event);
+			}
+		});
+	}
+	
+	private class DefaultEvent {
+		protected final Class<?> parameterType;
 		private final Method method;
 		private final Object bean;
 
-		private EventListener(Object bean, Method method, Class<?> parameterType) {
+		private DefaultEvent(Object bean, Method method, Class<?> parameterType) {
 			this.bean = bean;
 			this.method = method;
 			this.parameterType = parameterType;
@@ -56,13 +76,27 @@ public class EventRegistry implements Event {
 			return parameterType.isAssignableFrom(eventType);
 		}
 
-		public void fire(Object event) {
+		void doFire(Object event) {
 			try {
 				method.invoke(bean, event);
 			} catch (Throwable e) {
-				throw new RuntimeException("error while handling event "
-						+ event.getClass().getName(), e);
+				throw new RuntimeException("error while handling event " + event.getClass().getName(), e);
 			}
+		}
+
+	}
+	
+	private class QualifiedEvent extends DefaultEvent {
+		
+		private final Annotation qualifier;
+
+		private QualifiedEvent(Object bean, Method method, Class<?> parameterType, Annotation qualifier) {
+			super(bean, method, parameterType);
+			this.qualifier = qualifier;
+		}
+		
+		private boolean isSupported(Class<?> eventType, Annotation qaulifier) {
+			return parameterType.isAssignableFrom(eventType) && this.qualifier.equals(qaulifier);
 		}
 	}
 }
