@@ -9,5 +9,5 @@ import com.googlecode.spring.event.annotation.Qualifier;
 @Target({ ElementType.CONSTRUCTOR, ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD })
 @Documented
 public @interface ItemModified {
-
+	String someParam() default "";
 }

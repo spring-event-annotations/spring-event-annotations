@@ -16,7 +16,6 @@ import com.googlecode.spring.event.annotation.ObservesAnotationBeanPostProcessor
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/itemListenerWithQualifiersTestContext.xml")
-@Ignore
 public class ItemListenerWithQualifiersTest {
 	
 	@Autowired
@@ -27,7 +26,7 @@ public class ItemListenerWithQualifiersTest {
 	private Event<Item> itemCreatedEvent;
 	
 	@Autowired
-	@ItemModified
+	@ItemModified(someParam = "value")
 	private Event<Item> itemModifiedEvent;
 	
 	private EventHandledCallback eventHandledCallback = mock(EventHandledCallback.class);
@@ -46,6 +45,6 @@ public class ItemListenerWithQualifiersTest {
 	@Test
 	public void itemModified() throws InterruptedException {
 		itemModifiedEvent.fire(new Item(eventHandledCallback));
-		verify(eventHandledCallback).eventHandled("itemModified");		
+		verify(eventHandledCallback).eventHandled("itemModified");
 	}
 }

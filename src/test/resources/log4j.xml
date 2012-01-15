@@ -12,7 +12,7 @@
 	
 	<!-- Application Loggers -->
 	<logger name="com.googlecode">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
@@ -25,10 +25,6 @@
 	</logger>
 	
 	<logger name="org.springframework.context">
-		<level value="info" />
-	</logger>
-
-	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
 

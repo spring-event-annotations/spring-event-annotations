@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 @SuppressWarnings("rawtypes")
 public class EventRegistry implements Event {
+	private static final Logger LOG = LoggerFactory.getLogger(EventRegistry.class);
 	
 	private List<DefaultEvent> notQualifiedEvents = new ArrayList<DefaultEvent>();
 	private List<QualifiedEvent> qualifiedEvents = new ArrayList<QualifiedEvent>();
@@ -35,21 +38,28 @@ public class EventRegistry implements Event {
 		}
 	}
 	
-	public void fire(final Object event) {
+	public void fire(final Object observable) {
+		LOG.info("fire event for {}", observable.getClass().getName());
 		for (final DefaultEvent e : notQualifiedEvents) {
-			if(!e.isSupported(event.getClass())) {
+			if(!e.isSupported(observable.getClass())) {
 				continue;
 			}
-			execute(event, e);
+			execute(observable, e);
 		}
 	}
 
-	void fire(final Object event, final Annotation qualifier) {
+	void fire(final Object observable, final Annotation qualifier) {
+		LOG.info("fire qualified event \"{}\", \"{}\"", observable.getClass().getName(), qualifier);
+		boolean observerFound = false;
 		for (final QualifiedEvent e : qualifiedEvents) {
-			if(!e.isSupported(event.getClass(), qualifier)) {
+			if(!e.isSupported(observable.getClass(), qualifier)) {
 				continue;
 			}
-			execute(event, e);
+			observerFound = true;
+			execute(observable, e);
+		}
+		if(!observerFound) {
+			LOG.warn("observer not found for qualified event \"{}\", \"{}\"", observable.getClass().getName(), qualifier);
 		}
 	}
 	

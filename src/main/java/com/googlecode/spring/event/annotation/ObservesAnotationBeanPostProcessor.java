@@ -3,6 +3,8 @@ package com.googlecode.spring.event.annotation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.MethodParameter;
@@ -13,6 +15,8 @@ import com.googlecode.spring.event.*;
 public class ObservesAnotationBeanPostProcessor implements BeanPostProcessor {
 	
 	private EventRegistry eventRegistry;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ObservesAnotationBeanPostProcessor.class);
 	
 	public ObservesAnotationBeanPostProcessor() {
 	
@@ -28,6 +32,7 @@ public class ObservesAnotationBeanPostProcessor implements BeanPostProcessor {
 	
 	public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
 		ReflectionUtils.doWithFields(bean.getClass(), new ReflectionUtils.FieldCallback() {
+			@SuppressWarnings("rawtypes")
 			@Override
 			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
 				if(!field.getType().isAssignableFrom(Event.class)) {
@@ -36,6 +41,10 @@ public class ObservesAnotationBeanPostProcessor implements BeanPostProcessor {
 				Annotation[] annotations = field.getAnnotations();
 				for(Annotation ann : annotations) {
 					if(ann.annotationType().isAnnotationPresent(Qualifier.class)) {					
+						
+						LOG.info("found qualified Event \"@{}\" of bean \"{}\"",
+								new Object[] { ann.annotationType().getSimpleName(), bean.getClass().getName() });
+						
 						field.setAccessible(true);
 						// TODO If there is already object for given annotation, we should re-use it here
 						field.set(bean, new QualifiedEvent(eventRegistry, ann));						

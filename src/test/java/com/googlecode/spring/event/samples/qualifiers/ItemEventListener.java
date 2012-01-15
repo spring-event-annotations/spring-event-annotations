@@ -7,7 +7,7 @@ import com.googlecode.spring.event.annotation.Observes;
 @Service
 public class ItemEventListener  {
 
-	public void itemModified(@Observes @ItemModified Item item) {
+	public void itemModified(@Observes @ItemModified(someParam = "value") Item item) {
 		item.eventHandled("itemModified");
 	}
 	
