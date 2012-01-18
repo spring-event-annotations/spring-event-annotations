@@ -1,7 +1,7 @@
 <xsd:schema xmlns="http://www.springframework.org/schema/task"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:tool="http://www.springframework.org/schema/tool"
-	targetNamespace="http://spring-event-annotations.googlecode.com"
+	targetNamespace="http://spring-event-annotations.github.com"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xsd:annotation>
 		<xsd:documentation>

@@ -1,1 +1,1 @@
-http\://spring-event-annotations.googlecode.com=com.googlecode.spring.event.config.AnnotationDrivenEventNamespaceHandler
+http\://spring-event-annotations.github.com=com.github.spring.event.config.AnnotationDrivenEventNamespaceHandler
