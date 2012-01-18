@@ -2,13 +2,13 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.googlecode.spring-event-annotations</groupId>
+    <groupId>com.github.spring-event-annotations</groupId>
     <artifactId>spring-event-annotations</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>spring-event-annotations</name>
-    <url>http://code.google.com/p/spring-event-annotations</url>
+    <url>http://spring-event-annotations.github.com</url>
 
     <properties>
         <java-version>1.6</java-version>
