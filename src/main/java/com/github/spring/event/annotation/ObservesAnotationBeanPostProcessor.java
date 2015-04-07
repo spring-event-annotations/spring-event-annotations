@@ -40,7 +40,7 @@ public class ObservesAnotationBeanPostProcessor implements BeanPostProcessor {
 				}
 				Annotation[] annotations = field.getAnnotations();
 				for(Annotation ann : annotations) {
-					if(ann.annotationType().isAnnotationPresent(Qualifier.class)) {					
+					if(ann.annotationType().isAnnotationPresent(Qualifier.class)) {
 						
 						LOG.info("found qualified Event \"@{}\" of bean \"{}\"",
 								new Object[] { ann.annotationType().getSimpleName(), bean.getClass().getName() });

@@ -1,8 +1,10 @@
 package com.github.spring.event.config;
 
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AutowireCandidateQualifier;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -16,8 +18,8 @@ import com.github.spring.event.annotation.ObservesAnotationBeanPostProcessor;
 
 public class AnnotationDrivenEventBeanDefinitionParser implements BeanDefinitionParser {
 
-	static final String EVENT_REGISTRY_BEAN_NAME = AnnotationDrivenEventBeanDefinitionParser.class.getPackage().getName() + ".internalEventRegistry";
-	static final String ANNOTATION_POST_PROCESSOR_BEAN_NAME = AnnotationDrivenEventBeanDefinitionParser.class.getPackage().getName() + ".internalAnnotationBeanPostProcessor";
+	static final String EVENT_REGISTRY_BEAN_NAME = "com.github.spring.event.config.internalEventRegistry";
+	static final String ANNOTATION_POST_PROCESSOR_BEAN_NAME = "com.github.spring.event.config.internalAnnotationBeanPostProcessor";
 	
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
 		
@@ -33,6 +35,7 @@ public class AnnotationDrivenEventBeanDefinitionParser implements BeanDefinition
 		final RootBeanDefinition eventRegistry = new RootBeanDefinition(EventRegistry.class);
 		eventRegistry.setSource(elementSource);
         eventRegistry.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+		eventRegistry.addQualifier(new AutowireCandidateQualifier(Qualifier.class));
         
         String executor = element.getAttribute("executor");
 		if (StringUtils.hasText(executor)) {
