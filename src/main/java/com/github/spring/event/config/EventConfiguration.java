@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
+import java.util.concurrent.Executor;
+
 /**
  * Configures @Observes events
  * @author kedzie
@@ -25,11 +27,17 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 @Configuration
 public class EventConfiguration {
 
+   @Bean(name = AnnotationDrivenEventBeanDefinitionParser.EXECUTOR_BEAN_NAME)
+   @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+   public Executor executor() {
+      return new SimpleAsyncTaskExecutor();
+   }
+
    @Bean(name = AnnotationDrivenEventBeanDefinitionParser.EVENT_REGISTRY_BEAN_NAME)
    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-   public EventRegistry eventRegistry() {
+   public EventRegistry eventRegistry(Executor executor) {
       EventRegistry registry = new EventRegistry();
-      registry.setExecutor(new SimpleAsyncTaskExecutor());
+      registry.setExecutor(executor);
       return registry;
    }
 

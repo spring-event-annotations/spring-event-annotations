@@ -19,6 +19,7 @@ import com.github.spring.event.annotation.ObservesAnotationBeanPostProcessor;
 public class AnnotationDrivenEventBeanDefinitionParser implements BeanDefinitionParser {
 
 	static final String EVENT_REGISTRY_BEAN_NAME = "com.github.spring.event.config.internalEventRegistry";
+	static final String EXECUTOR_BEAN_NAME = "com.github.spring.event.config.internalExecutor";
 	static final String ANNOTATION_POST_PROCESSOR_BEAN_NAME = "com.github.spring.event.config.internalAnnotationBeanPostProcessor";
 	
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
