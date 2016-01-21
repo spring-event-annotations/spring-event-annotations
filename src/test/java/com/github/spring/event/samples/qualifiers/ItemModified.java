@@ -1,8 +1,10 @@
 package com.github.spring.event.samples.qualifiers;
 
-import java.lang.annotation.*;
 
 import com.github.spring.event.annotation.Qualifier;
+
+import java.lang.annotation.*;
+
 
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
